@@ -1,0 +1,8518 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The /var directory is used by daemons and other system services to temporarily store dynamic data. Some directories created by these processes may be world-writable.">
+      
+      
+        <meta name="author" content="moisesmsf">
+      
+      
+      
+        <link rel="prev" href="../../1.1.2-Configure-tmp/1.1.2.4-Ensure-nosuid-option-set-on-tmp-partition/">
+      
+      
+        <link rel="next" href="../1.1.3.2-Ensure-nodev-option-set-on-var-partition/">
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.3">
+    
+    
+      
+        <title>1.1.3.1 Ensure separate partition exists for /var - Hardening + Debian + CIS Benchmarks</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.0e669242.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#audit" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="Hardening + Debian + CIS Benchmarks" class="md-header__button md-logo" aria-label="Hardening + Debian + CIS Benchmarks" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Hardening + Debian + CIS Benchmarks
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              1.1.3.1 Ensure separate partition exists for /var
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/moisesmsf/hard-debian-benchmark.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="Hardening + Debian + CIS Benchmarks" class="md-nav__button md-logo" aria-label="Hardening + Debian + CIS Benchmarks" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Hardening + Debian + CIS Benchmarks
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/moisesmsf/hard-debian-benchmark.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1 Initial Setup
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            1 Initial Setup
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" checked>
+        
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.1 Filesystem Configuration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            1.1 Filesystem Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1" >
+        
+          <label class="md-nav__link" for="__nav_2_1_1" id="__nav_2_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.1.1 Disable unused filesystems
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            1.1.1 Disable unused filesystems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.1-Disable-unused-filesystems/1.1.1.1-Ensure-mounting-of-cramfs-filesystems-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.1.1 Ensure mounting of cramfs filesystems is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.1-Disable-unused-filesystems/1.1.1.2-Ensure-mounting-of-squashfs-filesystems-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.1.2 Ensure mounting of squashfs filesystems is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.1-Disable-unused-filesystems/1.1.1.3-Ensure-mounting-of-udf-filesystems-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.1.3 Ensure mounting of udf filesystems is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_2" >
+        
+          <label class="md-nav__link" for="__nav_2_1_2" id="__nav_2_1_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.1.2 Configure tmp
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            1.1.2 Configure tmp
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.2-Configure-tmp/1.1.2.1-Ensure-tmp-is-a-separate-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.2.1 Ensure /tmp is a separate partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.2-Configure-tmp/1.1.2.2-Ensure-nodev-option-set-on-tmp-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.2.2 Ensure nodev option set on /tmp partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.2-Configure-tmp/1.1.2.3-Ensure-noexec-option-set-on-tmp-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.2.3 Ensure noexec option set on /tmp partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.2-Configure-tmp/1.1.2.4-Ensure-nosuid-option-set-on-tmp-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.2.4 Ensure nosuid option set on /tmp partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_3" checked>
+        
+          <label class="md-nav__link" for="__nav_2_1_3" id="__nav_2_1_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.1.3 Configure var
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            1.1.3 Configure var
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    1.1.3.1 Ensure separate partition exists for /var
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    1.1.3.1 Ensure separate partition exists for /var
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#audit" class="md-nav__link">
+    Audit
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#remediation" class="md-nav__link">
+    Remediation
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.1.3.2-Ensure-nodev-option-set-on-var-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.3.2 Ensure nodev option set on /var partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1.1.3.3-Ensure-nosuid-option-set-on-var-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.3.3 Ensure nosuid option set on /var partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_4" >
+        
+          <label class="md-nav__link" for="__nav_2_1_4" id="__nav_2_1_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.1.4 Configure var tmp
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            1.1.4 Configure var tmp
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.4-Configure-var-tmp/1.1.4.1-Ensure-separate-partition-exists-for-var-tmp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.4.1 Ensure separate partition exists for /var/tmp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.4-Configure-var-tmp/1.1.4.2-Ensure-noexec-option-set-on-var-tmp-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.4.2 Ensure noexec option set on /var/tmp partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.4-Configure-var-tmp/1.1.4.3-Ensure-nosuid-option-set-on-var-tmp-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.4.3 Ensure nosuid option set on /var/tmp partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.4-Configure-var-tmp/1.1.4.4-Ensure-nodev-option-set-on-var-tmp-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.4.4 Ensure nodev option set on /var/tmp partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_5" >
+        
+          <label class="md-nav__link" for="__nav_2_1_5" id="__nav_2_1_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.1.5 Configure var log
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_5">
+            <span class="md-nav__icon md-icon"></span>
+            1.1.5 Configure var log
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.5-Configure-var-log/1.1.5.1-Ensure-separate-partition-exists-for-var-log/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.5.1 Ensure separate partition exists for /var/log
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.5-Configure-var-log/1.1.5.2-Ensure-nodev-option-set-on-var-log-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.5.2 Ensure nodev option set on /var/log partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.5-Configure-var-log/1.1.5.3-Ensure-noexec-option-set-on-var-log-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.5.3 Ensure noexec option set on /var/log partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.5-Configure-var-log/1.1.5.4-Ensure-nosuid-option-set-on-var-log-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.5.4 Ensure nosuid option set on /var/log partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_6" >
+        
+          <label class="md-nav__link" for="__nav_2_1_6" id="__nav_2_1_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.1.6 Configure var log audit
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_6">
+            <span class="md-nav__icon md-icon"></span>
+            1.1.6 Configure var log audit
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.6-Configure-var-log-audit/1.1.6.1-Ensure-separate-partition-exists-for-var-log-audit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.6.1 Ensure separate partition exists for /var/log/audit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.6-Configure-var-log-audit/1.1.6.2-Ensure-noexec-option-set-on-var-log-audit-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.6.2 Ensure noexec option set on /var/log/audit partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.6-Configure-var-log-audit/1.1.6.3-Ensure-nodev-option-set-on-var-log-audit-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.6.3 Ensure nodev option set on /var/log/audit partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.6-Configure-var-log-audit/1.1.6.4-Ensure-nosuid-option-set-on-var-log-audit-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.6.4 Ensure nosuid option set on /var/log/audit partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_7" >
+        
+          <label class="md-nav__link" for="__nav_2_1_7" id="__nav_2_1_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.1.7 Configure home
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_7">
+            <span class="md-nav__icon md-icon"></span>
+            1.1.7 Configure home
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.7-Configure-home/1.1.7.1-Ensure-separate-partition-exists-for-home/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.7.1 Ensure separate partition exists for /home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.7-Configure-home/1.1.7.2-Ensure-nodev-option-set-on-home-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.7.2 Ensure nodev option set on /home partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.7-Configure-home/1.1.7.3-Ensure-nosuid-option-set-on-home-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.7.3 Ensure nosuid option set on /home partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_8" >
+        
+          <label class="md-nav__link" for="__nav_2_1_8" id="__nav_2_1_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.1.8 Configure dev shm
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_8">
+            <span class="md-nav__icon md-icon"></span>
+            1.1.8 Configure dev shm
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.8-Configure-dev-shm/1.1.8.1-Ensure-nodev-option-set-on-dev-shm-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.8.1 Ensure nodev option set on /dev/shm partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.8-Configure-dev-shm/1.1.8.2-Ensure-noexec-option-set-on-dev-shm-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.8.2 Ensure noexec option set on /dev/shm partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.8-Configure-dev-shm/1.1.8.3-Ensure-nosuid-option-set-on-dev-shm-partition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.8.3 Ensure nosuid option set on /dev/shm partition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.9-Disable-Automounting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.9 Disable Automounting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1.1.10-Disable-USB-Storage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.1.10 Disable USB Storage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.2 Configure Software Updates
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            1.2 Configure Software Updates
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.2-Configure-Software-Updates/1.2.1-Ensure-package-manager-repositories-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.2.1 Ensure package manager repositories are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.2-Configure-Software-Updates/1.2.2-Ensure-gpg-keys-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.2.2 Ensure GPG keys are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.3 Filesystem Integrity Checking
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            1.3 Filesystem Integrity Checking
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.3-Filesystem-Integrity-Checking/1.3.1-Ensure-aide-is-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.3.1 Ensure AIDE is installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.3-Filesystem-Integrity-Checking/1.3.2-Ensure-filesystem-integrity-is-regularly-checked/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.3.2 Ensure filesystem integrity is regularly checked
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.4 Secure Boot Settings
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            1.4 Secure Boot Settings
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.4-Secure-Boot-Settings/1.4.1-Ensure-bootloader-password-is-set/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.4.1 Ensure bootloader password is set
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.4-Secure-Boot-Settings/1.4.2-Ensure-permissions-on-bootloader-config-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.4.2 Ensure permissions on bootloader config are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.4-Secure-Boot-Settings/1.4.3-Ensure-authentication-required-for-single-user-mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.4.3 Ensure authentication required for single user mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.5 Additional Process Hardening
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            1.5 Additional Process Hardening
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.5-Additional-Process-Hardening/1.5.1-Ensure-address-space-layout-randomization-%28aslr%29-is-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.5.1 Ensure address space layout randomization (ASLR) is enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.5-Additional-Process-Hardening/1.5.2-Ensure-prelink-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.5.2 Ensure prelink is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.5-Additional-Process-Hardening/1.5.3-Ensure-automatic-error-reporting-is-not-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.5.3 Ensure Automatic Error Reporting is not enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.5-Additional-Process-Hardening/1.5.4-Ensure-core-dumps-are-restricted/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.5.4 Ensure core dumps are restricted
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.6 Mandatory Access Control
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            1.6 Mandatory Access Control
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.6.1 Configure AppArmor
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            1.6.1 Configure AppArmor
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.6-Mandatory-Access-Control/1.6.1-Configure-AppArmor/1.6.1.1-Ensure-apparmor-is-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.6.1.1 Ensure AppArmor is installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.6-Mandatory-Access-Control/1.6.1-Configure-AppArmor/1.6.1.2-Ensure-apparmor-is-enabled-in-the-bootloader-configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.6.1.2 Ensure AppArmor is enabled in the bootloader configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.6-Mandatory-Access-Control/1.6.1-Configure-AppArmor/1.6.1.3-Ensure-all-apparmor-profiles-are-in-enforce-or-complain-mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.6.1.3 Ensure all AppArmor Profiles are in enforce or complain mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.6-Mandatory-Access-Control/1.6.1-Configure-AppArmor/1.6.1.4-Ensure-all-apparmor-profiles-are-enforcing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.6.1.4 Ensure all AppArmor Profiles are enforcing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
+        
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.7 Command Line Warning Banners
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            1.7 Command Line Warning Banners
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.7-Command-Line-Warning-Banners/1.7.1-Ensure-message-of-the-day-is-configured-properly/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.7.1 Ensure message of the day is configured properly
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.7-Command-Line-Warning-Banners/1.7.2-Ensure-local-login-warning-banner-is-configured-properly/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.7.2 Ensure local login warning banner is configured properly
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.7-Command-Line-Warning-Banners/1.7.3-Ensure-remote-login-warning-banner-is-configured-properly/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.7.3 Ensure remote login warning banner is configured properly
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.7-Command-Line-Warning-Banners/1.7.4-Ensure-permissions-on-etc-motd-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.7.4 Ensure permissions on /etc/motd are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.7-Command-Line-Warning-Banners/1.7.5-Ensure-permissions-on-etc-issue-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.7.5 Ensure permissions on /etc/issue are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.7-Command-Line-Warning-Banners/1.7.6-Ensure-permissions-on-etc-issue.net-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.7.6 Ensure permissions on /etc/issue.net are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        
+          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    1.8 Gnome Display Manager
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_8">
+            <span class="md-nav__icon md-icon"></span>
+            1.8 Gnome Display Manager
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.8-Gnome-Display-Manager/1.8.1-Ensure-gnome-display-manager-is-removed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.8.1 Ensure GNOME Display Manager is removed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.8-Gnome-Display-Manager/1.8.2-Ensure-gdm-login-banner-is-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.8.2 Ensure GDM login banner is configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.8-Gnome-Display-Manager/1.8.3-Ensure-gdm-disable-user-list-option-is-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.8.3 Ensure GDM disable-user-list option is enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.8-Gnome-Display-Manager/1.8.4-Ensure-gdm-screen-locks-when-the-user-is-idle/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.8.4 Ensure GDM screen locks when the user is idle
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.8-Gnome-Display-Manager/1.8.5-Ensure-gdm-screen-locks-cannot-be-overridden/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.8.5 Ensure GDM screen locks cannot be overridden
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.8-Gnome-Display-Manager/1.8.6-Ensure-gdm-automatic-mounting-of-removable-media-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.8.6 Ensure GDM automatic mounting of removable media is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.8-Gnome-Display-Manager/1.8.7-Ensure-gdm-disabling-automatic-mounting-of-removable-media-is-not-overridden/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.8.7 Ensure GDM disabling automatic mounting of removable media is not overridden
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.8-Gnome-Display-Manager/1.8.8-Ensure-gdm-autorun-never-is-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.8.8 Ensure GDM autorun-never is enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.8-Gnome-Display-Manager/1.8.9-Ensure-gdm-autorun-never-is-not-overridden/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.8.9 Ensure GDM autorun-never is not overridden
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.8-Gnome-Display-Manager/1.8.10-Ensure-xdcmp-is-not-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.8.10 Ensure XDCMP is not enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../1.9-Ensure-updates-patches-and-additional-security-software-are-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1.9 Ensure updates, patches, and additional security software are installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    2 Services
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            2 Services
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    2.1 Configure Time Synchronization
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            2.1 Configure Time Synchronization
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_1" >
+        
+          <label class="md-nav__link" for="__nav_3_1_1" id="__nav_3_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    2.1.1 Ensure time synchronization is in use
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            2.1.1 Ensure time synchronization is in use
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.1-Configure-Time-Synchronization/2.1.1-Ensure-time-synchronization-is-in-use/2.1.1.1-Ensure-a-single-time-synchronization-daemon-is-in-use/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.1.1.1 Ensure a single time synchronization daemon is in use
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_2" >
+        
+          <label class="md-nav__link" for="__nav_3_1_2" id="__nav_3_1_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    2.1.2 Configure chrony
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            2.1.2 Configure chrony
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.1-Configure-Time-Synchronization/2.1.2-Configure-chrony/2.1.2.1-Ensure-chrony-is-configured-with-authorized-timeserver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.1.2.1 Ensure chrony is configured with authorized timeserver
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.1-Configure-Time-Synchronization/2.1.2-Configure-chrony/2.1.2.2-Ensure-chrony-is-running-as-user-chrony/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.1.2.2 Ensure chrony is running as user _chrony
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.1-Configure-Time-Synchronization/2.1.2-Configure-chrony/2.1.2.3-Ensure-chrony-is-enabled-and-running/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.1.2.3 Ensure chrony is enabled and running
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_3" >
+        
+          <label class="md-nav__link" for="__nav_3_1_3" id="__nav_3_1_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    2.1.3 Configure systemd timesyncd
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            2.1.3 Configure systemd timesyncd
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.1-Configure-Time-Synchronization/2.1.3-Configure-systemd-timesyncd/2.1.3.1-Ensure-systemd-timesyncd-configured-with-authorized-timeserver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.1.3.1 Ensure systemd-timesyncd configured with authorized timeserver
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.1-Configure-Time-Synchronization/2.1.3-Configure-systemd-timesyncd/2.1.3.2-Ensure-systemd-timesyncd-is-enabled-and-running/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.1.3.2 Ensure systemd-timesyncd is enabled and running
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_4" >
+        
+          <label class="md-nav__link" for="__nav_3_1_4" id="__nav_3_1_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    2.1.4 Configure ntp
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            2.1.4 Configure ntp
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.1-Configure-Time-Synchronization/2.1.4-Configure-ntp/2.1.4.1-Ensure-ntp-access-control-is-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.1.4.1 Ensure ntp access control is configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.1-Configure-Time-Synchronization/2.1.4-Configure-ntp/2.1.4.2-Ensure-ntp-is-configured-with-authorized-timeserver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.1.4.2 Ensure ntp is configured with authorized timeserver
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.1-Configure-Time-Synchronization/2.1.4-Configure-ntp/2.1.4.3-Ensure-ntp-is-running-as-user-ntp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.1.4.3 Ensure ntp is running as user ntp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.1-Configure-Time-Synchronization/2.1.4-Configure-ntp/2.1.4.4-Ensure-ntp-is-enabled-and-running/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Ensure mounting of cramfs filesystems is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    2.2 Special Purpose Services
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            2.2 Special Purpose Services
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.1-Ensure-x-window-system-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.1 Ensure X Window System is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.2-Ensure-avahi-server-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.2 Ensure Avahi Server is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.3-Ensure-cups-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.3 Ensure CUPS is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.4-Ensure-dhcp-server-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.4 Ensure DHCP Server is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.5-Ensure-ldap-server-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.5 Ensure LDAP server is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.6-Ensure-nfs-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.6 Ensure NFS is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.7-Ensure-dns-server-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.7 Ensure DNS Server is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.8-Ensure-ftp-server-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.8 Ensure FTP Server is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.9-Ensure-http-server-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.9 Ensure HTTP server is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.10-Ensure-imap-and-pop3-server-are-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.10 Ensure IMAP and POP3 server are not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.11-Ensure-samba-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.11 Ensure Samba is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.12-Ensure-http-proxy-server-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.12 Ensure HTTP Proxy Server is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.13-Ensure-snmp-server-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.13 Ensure SNMP Server is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.14-Ensure-nis-server-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.14 Ensure NIS Server is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.15-Ensure-mail-transfer-agent-is-configured-for-local-only-mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.15 Ensure mail transfer agent is configured for local-only mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.2-Special-Purpose-Services/2.2.16-Ensure-rsync-service-is-either-not-installed-or-masked/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.2.16 Ensure rsync service is either not installed or masked
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    2.3 Service Clients
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            2.3 Service Clients
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.3-Service-Clients/2.3.1-Ensure-nis-client-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.3.1 Ensure NIS Client is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.3-Service-Clients/2.3.2-Ensure-rsh-client-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.3.2 Ensure rsh client is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.3-Service-Clients/2.3.3-Ensure-talk-client-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.3.3 Ensure talk client is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.3-Service-Clients/2.3.4-Ensure-telnet-client-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.3.4 Ensure telnet client is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.3-Service-Clients/2.3.5-Ensure-ldap-client-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.3.5 Ensure LDAP client is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.3-Service-Clients/2.3.6-Ensure-rpc-is-not-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.3.6 Ensure RPC is not installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../2-Services/2.4-Ensure-nonessential-services-are-removed-or-masked/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2.4 Ensure nonessential services are removed or masked
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    3 Network Configuration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            3 Network Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    3.1 Disable unused network protocols and devices
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            3.1 Disable unused network protocols and devices
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.1-Disable-unused-network-protocols-and-devices/3.1.1-Ensure-system-is-checked-to-determine-if-ipv6-is-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.1.1 Ensure system is checked to determine if IPv6 is enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.1-Disable-unused-network-protocols-and-devices/3.1.2-Ensure-wireless-interfaces-are-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.1.2 Ensure wireless interfaces are disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.1-Disable-unused-network-protocols-and-devices/3.1.3-Ensure-dccp-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.1.3 Ensure DCCP is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.1-Disable-unused-network-protocols-and-devices/3.1.4-Ensure-sctp-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.1.4 Ensure SCTP is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.1-Disable-unused-network-protocols-and-devices/3.1.5-Ensure-rds-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.1.5 Ensure RDS is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.1-Disable-unused-network-protocols-and-devices/3.1.6-Ensure-tipc-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.1.6 Ensure TIPC is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    3.2 Network Parameters (Host Only)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            3.2 Network Parameters (Host Only)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.2-Network-Parameters-%28Host-Only%29/3.2.1-Ensure-packet-redirect-sending-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.2.1 Ensure packet redirect sending is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.2-Network-Parameters-%28Host-Only%29/3.2.2-Ensure-ip-forwarding-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.2.2 Ensure IP forwarding is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    3.3 Network Parameters (Host and Router)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            3.3 Network Parameters (Host and Router)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.3-Network-Parameters-%28Host-and-Router%29/3.3.1-Ensure-source-routed-packets-are-not-accepted/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.3.1 Ensure source routed packets are not accepted
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.3-Network-Parameters-%28Host-and-Router%29/3.3.2-Ensure-icmp-redirects-are-not-accepted/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.3.2 Ensure ICMP redirects are not accepted
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.3-Network-Parameters-%28Host-and-Router%29/3.3.3-Ensure-secure-icmp-redirects-are-not-accepted/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.3.3 Ensure secure ICMP redirects are not accepted
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.3-Network-Parameters-%28Host-and-Router%29/3.3.4-Ensure-suspicious-packets-are-logged/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.3.4 Ensure suspicious packets are logged
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.3-Network-Parameters-%28Host-and-Router%29/3.3.5-Ensure-broadcast-icmp-requests-are-ignored/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.3.5 Ensure broadcast ICMP requests are ignored
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.3-Network-Parameters-%28Host-and-Router%29/3.3.6-Ensure-bogus-icmp-responses-are-ignored/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.3.6 Ensure bogus ICMP responses are ignored
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.3-Network-Parameters-%28Host-and-Router%29/3.3.7-Ensure-reverse-path-filtering-is-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.3.7 Ensure Reverse Path Filtering is enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.3-Network-Parameters-%28Host-and-Router%29/3.3.8-Ensure-tcp-syn-cookies-is-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.3.8 Ensure TCP SYN Cookies is enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.3-Network-Parameters-%28Host-and-Router%29/3.3.9-Ensure-ipv6-router-advertisements-are-not-accepted/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.3.9 Ensure IPv6 router advertisements are not accepted
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    3.5 Firewall Configuration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            3.5 Firewall Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4_1" >
+        
+          <label class="md-nav__link" for="__nav_4_4_1" id="__nav_4_4_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    3.5.1 Configure UncomplicatedFirewall
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            3.5.1 Configure UncomplicatedFirewall
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.1-Configure-UncomplicatedFirewall/3.5.1.1-Ensure-ufw-is-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.1.1 Ensure ufw is installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.1-Configure-UncomplicatedFirewall/3.5.1.2-Ensure-iptables-persistent-is-not-installed-with-ufw/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.1.2 Ensure iptables-persistent is not installed with ufw
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.1-Configure-UncomplicatedFirewall/3.5.1.3-Ensure-ufw-service-is-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.1.3 Ensure ufw service is enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.1-Configure-UncomplicatedFirewall/3.5.1.4-Ensure-ufw-loopback-traffic-is-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.1.4 Ensure ufw loopback traffic is configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.1-Configure-UncomplicatedFirewall/3.5.1.5-Ensure-ufw-outbound-connections-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.1.5 Ensure ufw outbound connections are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.1-Configure-UncomplicatedFirewall/3.5.1.6-Ensure-ufw-firewall-rules-exist-for-all-open-ports/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.1.6 Ensure ufw firewall rules exist for all open ports
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.1-Configure-UncomplicatedFirewall/3.5.1.7-Ensure-ufw-default-deny-firewall-policy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.1.7 Ensure ufw default deny firewall policy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4_2" >
+        
+          <label class="md-nav__link" for="__nav_4_4_2" id="__nav_4_4_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    3.5.2 Configure nftables
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            3.5.2 Configure nftables
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.2-Configure-nftables/3.5.2.1-Ensure-nftables-is-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.2.1 Ensure nftables is installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.2-Configure-nftables/3.5.2.2-Ensure-ufw-is-uninstalled-or-disabled-with-nftables/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.2.2 Ensure ufw is uninstalled or disabled with nftables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.2-Configure-nftables/3.5.2.3-Ensure-iptables-are-flushed-with-nftables/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.2.3 Ensure iptables are flushed with nftables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.2-Configure-nftables/3.5.2.4-Ensure-a-nftables-table-exists/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.2.4 Ensure a nftables table exists
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.2-Configure-nftables/3.5.2.5-Ensure-nftables-base-chains-exist/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.2.5 Ensure nftables base chains exist
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.2-Configure-nftables/3.5.2.6-Ensure-nftables-loopback-traffic-is-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.2.6 Ensure nftables loopback traffic is configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.2-Configure-nftables/3.5.2.7-Ensure-nftables-outbound-and-established-connections-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.2.7 Ensure nftables outbound and established connections are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.2-Configure-nftables/3.5.2.8-Ensure-nftables-default-deny-firewall-policy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.2.8 Ensure nftables default deny firewall policy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.2-Configure-nftables/3.5.2.9-Ensure-nftables-service-is-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.2.9 Ensure nftables service is enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.2-Configure-nftables/3.5.2.10-Ensure-nftables-rules-are-permanent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.2.10 Ensure nftables rules are permanent
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4_3" >
+        
+          <label class="md-nav__link" for="__nav_4_4_3" id="__nav_4_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    3.5.3 Configure iptables
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            3.5.3 Configure iptables
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4_3_1" >
+        
+          <label class="md-nav__link" for="__nav_4_4_3_1" id="__nav_4_4_3_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    3.5.3.1 configure iptables software
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_4_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            3.5.3.1 configure iptables software
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.3-Configure-iptables/3.5.3.1-configure-iptables-software/3.5.3.1.1-Ensure-iptables-packages-are-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.3.1.1 Ensure iptables packages are installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.3-Configure-iptables/3.5.3.1-configure-iptables-software/3.5.3.1.2-Ensure-nftables-is-not-installed-with-iptables/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.3.1.2 Ensure nftables is not installed with iptables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.3-Configure-iptables/3.5.3.1-configure-iptables-software/3.5.3.1.3-Ensure-ufw-is-uninstalled-or-disabled-with-iptables/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.3.1.3 Ensure ufw is uninstalled or disabled with iptables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4_3_2" >
+        
+          <label class="md-nav__link" for="__nav_4_4_3_2" id="__nav_4_4_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    3.5.3.2 configure ipv4 iptables
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_4_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            3.5.3.2 configure ipv4 iptables
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.3-Configure-iptables/3.5.3.2-configure-ipv4-iptables/3.5.3.2.1-Ensure-iptables-default-deny-firewall-policy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.3.2.1 Ensure iptables default deny firewall policy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.3-Configure-iptables/3.5.3.2-configure-ipv4-iptables/3.5.3.2.2-Ensure-iptables-loopback-traffic-is-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.3.2.2 Ensure iptables loopback traffic is configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.3-Configure-iptables/3.5.3.2-configure-ipv4-iptables/3.5.3.2.3-Ensure-iptables-outbound-and-established-connections-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.3.2.3 Ensure iptables outbound and established connections are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.3-Configure-iptables/3.5.3.2-configure-ipv4-iptables/3.5.3.2.4-Ensure-iptables-firewall-rules-exist-for-all-open-ports/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.3.2.4 Ensure iptables firewall rules exist for all open ports
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4_3_3" >
+        
+          <label class="md-nav__link" for="__nav_4_4_3_3" id="__nav_4_4_3_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    3.5.3.3 Configure IPv6 ip6tables
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_4_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            3.5.3.3 Configure IPv6 ip6tables
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.3-Configure-iptables/3.5.3.3-Configure-IPv6-ip6tables/3.5.3.3.1-Ensure-ip6tables-default-deny-firewall-policy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.3.3.1 Ensure ip6tables default deny firewall policy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.3-Configure-iptables/3.5.3.3-Configure-IPv6-ip6tables/3.5.3.3.2-Ensure-ip6tables-loopback-traffic-is-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.3.3.2 Ensure ip6tables loopback traffic is configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.3-Configure-iptables/3.5.3.3-Configure-IPv6-ip6tables/3.5.3.3.3-Ensure-ip6tables-outbound-and-established-connections-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.3.3.3 Ensure ip6tables outbound and established connections are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../3-Network-Configuration/3.5-Firewall-Configuration/3.5.3-Configure-iptables/3.5.3.3-Configure-IPv6-ip6tables/3.5.3.3.4-Ensure-ip6tables-firewall-rules-exist-for-all-open-ports/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3.5.3.3.4 Ensure ip6tables firewall rules exist for all open ports
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    4 Logging and Auditing
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            4 Logging and Auditing
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    4.1 Configure System Accounting (auditd)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            4.1 Configure System Accounting (auditd)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_1" >
+        
+          <label class="md-nav__link" for="__nav_5_1_1" id="__nav_5_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    4.1.1 Ensure auditing is enabled
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            4.1.1 Ensure auditing is enabled
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.1-Ensure-auditing-is-enabled/4.1.1.1-Ensure-auditd-is-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.1.1 Ensure auditd is installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.1-Ensure-auditing-is-enabled/4.1.1.2-Ensure-auditd-service-is-enabled-and-active/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.1.2 Ensure auditd service is enabled and active
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.1-Ensure-auditing-is-enabled/4.1.1.3-Ensure-auditing-for-processes-that-start-prior-to-auditd-is-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.1.3 Ensure auditing for processes that start prior to auditd is enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.1-Ensure-auditing-is-enabled/4.1.1.4-Ensure-audit_backlog_limit-is-sufficient/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.1.4 Ensure audit_backlog_limit is sufficient
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_2" >
+        
+          <label class="md-nav__link" for="__nav_5_1_2" id="__nav_5_1_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    4.1.2 Configure Data Retention
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            4.1.2 Configure Data Retention
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.2-Configure-Data-Retention/4.1.2.1-Ensure-audit-log-storage-size-is-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.2.1 Ensure audit log storage size is configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.2-Configure-Data-Retention/4.1.2.2-Ensure-audit-logs-are-not-automatically-deleted/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.2.2 Ensure audit logs are not automatically deleted
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.2-Configure-Data-Retention/4.1.2.3-Ensure-system-is-disabled-when-audit-logs-are-full/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.2.3 Ensure system is disabled when audit logs are full
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_3" >
+        
+          <label class="md-nav__link" for="__nav_5_1_3" id="__nav_5_1_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    4.1.3 Configure auditd rules
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            4.1.3 Configure auditd rules
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.1-Ensure-changes-to-system-administration-scope-%28sudoers%29-is-collected/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.1 Ensure changes to system administration scope (sudoers) is collected
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.2-Ensure-actions-as-another-user-are-always-logged/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.2 Ensure actions as another user are always logged
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.3-Ensure-events-that-modify-the-sudo-log-file-are-collected/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.3 Ensure events that modify the sudo log file are collected
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.4-Ensure-events-that-modify-date-and-time-information-are-collected/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.4 Ensure events that modify date and time information are collected
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.5-Ensure-events-that-modify-the-system%27s-network-environment-are-collected/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.5 Ensure events that modify the system's network environment are collected
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.6-Ensure-use-of-privileged-commands-are-collected/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.6 Ensure use of privileged commands are collected
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.7-Ensure-unsuccessful-file-access-attempts-are-collected/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.7 Ensure unsuccessful file access attempts are collected
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.8-Ensure-events-that-modify-user-group-information-are-collected/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.8 Ensure events that modify user/group information are collected
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.9-Ensure-discretionary-access-control-permission-modification-events-are-collected/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.9 Ensure discretionary access control permission modification events are collected
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.10-Ensure-successful-file-system-mounts-are-collected/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.10 Ensure successful file system mounts are collected
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.11-Ensure-session-initiation-information-is-collected/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.11 Ensure session initiation information is collected
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.12-Ensure-login-and-logout-events-are-collected/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.12 Ensure login and logout events are collected
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.13-Ensure-file-deletion-events-by-users-are-collected/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.13 Ensure file deletion events by users are collected
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.14-Ensure-events-that-modify-the-system%27s-mandatory-access-controls-are-collected/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.14 Ensure events that modify the system's Mandatory Access Controls are collected
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.15-Ensure-successful-and-unsuccessful-attempts-to-use-the-chcon-command-are-recorded/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.15 Ensure successful and unsuccessful attempts to use the chcon command are recorded
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.16-Ensure-successful-and-unsuccessful-attempts-to-use-the-setfacl-command-are-recorded/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.16 Ensure successful and unsuccessful attempts to use the setfacl command are recorded
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.17-Ensure-successful-and-unsuccessful-attempts-to-use-the-chacl-command-are-recorded/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.17 Ensure successful and unsuccessful attempts to use the chacl command are recorde
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.18-Ensure-successful-and-unsuccessful-attempts-to-use-the-usermod-command-are-recorded/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.18 Ensure successful and unsuccessful attempts to use the usermod command are recorded
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.19-Ensure-kernel-module-loading-unloading-and-modification-is-collected/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.19 Ensure kernel module loading unloading and modification is collected
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.20-Ensure-the-audit-configuration-is-immutable/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.20 Ensure the audit configuration is immutable
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.3-Configure-auditd-rules/4.1.3.21-Ensure-the-running-and-on-disk-configuration-is-the-same/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.3.21 Ensure the running and on disk configuration is the same
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_4" >
+        
+          <label class="md-nav__link" for="__nav_5_1_4" id="__nav_5_1_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    4.1.4 Configure auditd file access
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            4.1.4 Configure auditd file access
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.4-Configure-auditd-file-access/4.1.4.1-Ensure-audit-log-files-are-mode-0640-or-less-permissive/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.4.1 Ensure audit log files are mode 0640 or less permissive
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.4-Configure-auditd-file-access/4.1.4.2-Ensure-only-authorized-users-own-audit-log-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.4.2 Ensure only authorized users own audit log files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.4-Configure-auditd-file-access/4.1.4.3-Ensure-only-authorized-groups-are-assigned-ownership-of-audit-log-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.4.3 Ensure only authorized groups are assigned ownership of audit log files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.4-Configure-auditd-file-access/4.1.4.4-Ensure-the-audit-log-directory-is-0750-or-more-restrictive/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.4.4 Ensure the audit log directory is 0750 or more restrictive
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.4-Configure-auditd-file-access/4.1.4.5-Ensure-audit-configuration-files-are-640-or-more-restrictive/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.4.5 Ensure audit configuration files are 640 or more restrictive
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.4-Configure-auditd-file-access/4.1.4.6-Ensure-audit-configuration-files-are-owned-by-root/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.4.6 Ensure audit configuration files are owned by root
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.4-Configure-auditd-file-access/4.1.4.7-Ensure-audit-configuration-files-belong-to-group-root/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.4.7 Ensure audit configuration files belong to group root
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.4-Configure-auditd-file-access/4.1.4.8-Ensure-audit-tools-are-755-or-more-restrictive/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.4.8 Ensure audit tools are 755 or more restrictive
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.4-Configure-auditd-file-access/4.1.4.9-Ensure-audit-tools-are-owned-by-root/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.4.9 Ensure audit tools are owned by root
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.4-Configure-auditd-file-access/4.1.4.10-Ensure-audit-tools-belong-to-group-root/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.4.10 Ensure audit tools belong to group root
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.1-Configure-System-Accounting-%28auditd%29/4.1.4-Configure-auditd-file-access/4.1.4.11-Ensure-cryptographic-mechanisms-are-used-to-protect-the-integrity-of-audit-tools/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.1.4.11 Ensure cryptographic mechanisms are used to protect the integrity of audit tool
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    4.2 Configure Logging
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            4.2 Configure Logging
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2_1" >
+        
+          <label class="md-nav__link" for="__nav_5_2_1" id="__nav_5_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    4.2.1 Configure journald
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            4.2.1 Configure journald
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2_1_1" >
+        
+          <label class="md-nav__link" for="__nav_5_2_1_1" id="__nav_5_2_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    4.2.1.1 Ensure journald is configured to send logs to a remote log host
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_2_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            4.2.1.1 Ensure journald is configured to send logs to a remote log host
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.1-Configure-journald/4.2.1.1-Ensure-journald-is-configured-to-send-logs-to-a-remote-log-host/4.2.1.1.1-Ensure-systemd-journal-remote-is-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.1.1.1 Ensure systemd-journal-remote is installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.1-Configure-journald/4.2.1.1-Ensure-journald-is-configured-to-send-logs-to-a-remote-log-host/4.2.1.1.2-Ensure-systemd-journal-remote-is-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.1.1.2 Ensure systemd-journal-remote is configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.1-Configure-journald/4.2.1.1-Ensure-journald-is-configured-to-send-logs-to-a-remote-log-host/4.2.1.1.3-Ensure-systemd-journal-remote-is-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.1.1.3 Ensure systemd-journal-remote is enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.1-Configure-journald/4.2.1.1-Ensure-journald-is-configured-to-send-logs-to-a-remote-log-host/4.2.1.1.4-Ensure-journald-is-not-configured-to-recieve-logs-from-a-remote-client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.1.1.4 Ensure journald is not configured to recieve logs from a remote client
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.1-Configure-journald/4.2.1.2-Ensure-journald-service-is-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.1.2 Ensure journald service is enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.1-Configure-journald/4.2.1.3-Ensure-journald-is-configured-to-compress-large-log-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.1.3 Ensure journald is configured to compress large log files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.1-Configure-journald/4.2.1.4-Ensure-journald-is-configured-to-write-logfiles-to-persistent-disk/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.1.4 Ensure journald is configured to write logfiles to persistent disk
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.1-Configure-journald/4.2.1.5-ensure-journald-is-not-configured-to-send-logs-to-rsyslog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.1.5 Ensure journald is not configured to send logs to rsyslog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.1-Configure-journald/4.2.1.6-Ensure-journald-log-rotation-is-configured-per-site-policy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.1.6 Ensure journald log rotation is configured per site policy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.1-Configure-journald/4.2.1.7-Ensure-journald-default-file-permissions-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.1.7 Ensure journald default file permissions configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2_2" >
+        
+          <label class="md-nav__link" for="__nav_5_2_2" id="__nav_5_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    4.2.2 Configure rsyslog
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            4.2.2 Configure rsyslog
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.2-Configure-rsyslog/4.2.2.1-Ensure-rsyslog-is-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.2.1 Ensure rsyslog is installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.2-Configure-rsyslog/4.2.2.2-Ensure-rsyslog-service-is-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.2.2 Ensure rsyslog service is enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.2-Configure-rsyslog/4.2.2.3-Ensure-journald-is-configured-to-send-logs-to-rsyslog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.2.3 Ensure journald is configured to send logs to rsyslog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.2-Configure-rsyslog/4.2.2.4-Ensure-rsyslog-default-file-permissions-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.2.4 Ensure rsyslog default file permissions are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.2-Configure-rsyslog/4.2.2.5-Ensure-logging-is-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.2.5 Ensure logging is configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.2-Configure-rsyslog/4.2.2.6-Ensure-rsyslog-is-configured-to-send-logs-to-a-remote-log-host/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.2.6 Ensure rsyslog is configured to send logs to a remote log host
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.2-Configure-rsyslog/4.2.2.7-Ensure-rsyslog-is-not-configured-to-receive-logs-from-a-remote-client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.2.7 Ensure rsyslog is not configured to receive logs from a remote client
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../4-Logging-and-Auditing/4.2-Configure-Logging/4.2.3-Ensure-all-logfiles-have-appropriate-permissions-and-ownership/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4.2.3 Ensure all logfiles have appropriate permissions and ownership
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    5 Access Authentication and Authorization
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            5 Access Authentication and Authorization
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" >
+        
+          <label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    5.1 Configure time based job schedulers
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            5.1 Configure time based job schedulers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.1-Configure-time-based-job-schedulers/5.1.1-Ensure-cron-daemon-is-enabled-and-running/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.1.1 Ensure cron daemon is enabled and running
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.1-Configure-time-based-job-schedulers/5.1.2-Ensure-permissions-on-etc-crontab-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.1.2 Ensure permissions on /etc/crontab are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.1-Configure-time-based-job-schedulers/5.1.3-Ensure-permissions-on-etc-cron.hourly-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.1.3 Ensure permissions on /etc/cron.hourly are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.1-Configure-time-based-job-schedulers/5.1.4-Ensure-permissions-on-etc-cron.daily-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.1.4 Ensure permissions on /etc/cron.daily are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.1-Configure-time-based-job-schedulers/5.1.5-Ensure-permissions-on-etc-cron.weekly-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.1.5 Ensure permissions on /etc/cron.weekly are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.1-Configure-time-based-job-schedulers/5.1.6-Ensure-permissions-on-etc-cron.monthly-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.1.6 Ensure permissions on /etc/cron.monthly are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.1-Configure-time-based-job-schedulers/5.1.7-Ensure-permissions-on-etc-cron.d-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.1.7 Ensure permissions on /etc/cron.d are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.1-Configure-time-based-job-schedulers/5.1.8-Ensure-cron-is-restricted-to-authorized-users/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.1.8 Ensure cron is restricted to authorized users
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.1-Configure-time-based-job-schedulers/5.1.9-Ensure-at-is-restricted-to-authorized-users/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.1.9 Ensure at is restricted to authorized users
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+        
+          <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    5.2 Configure SSH Server
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            5.2 Configure SSH Server
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.1-Ensure-permissions-on-etc-ssh-sshd_config-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.1 Ensure permissions on /etc/ssh/sshd_config are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.2-Ensure-permissions-on-SSH-private-host-key-files-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.2 Ensure permissions on SSH private host key files are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.3-Ensure-permissions-on-SSH-public-host-key-files-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.3 Ensure permissions on SSH public host key files are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.4-Ensure-SSH-access-is-limited/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.4 Ensure SSH access is limited
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.5-Ensure-SSH-LogLevel-is-appropriate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.5 Ensure SSH LogLevel is appropriate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.6-Ensure-SSH-PAM-is-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.6 Ensure SSH PAM is enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.7-Ensure-SSH-root-login-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.7 Ensure SSH root login is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.8-Ensure-SSH-HostbasedAuthentication-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.8 Ensure SSH HostbasedAuthentication is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.9-Ensure-SSH-PermitEmptyPasswords-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.9 Ensure SSH PermitEmptyPasswords is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.10-Ensure-SSH-PermitUserEnvironment-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.10 Ensure SSH PermitUserEnvironment is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.11-Ensure-SSH-IgnoreRhosts-is-enabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.11 Ensure SSH IgnoreRhosts is enabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.12-Ensure-SSH-X11-forwarding-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.12 Ensure SSH X11 forwarding is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.13-Ensure-only-strong-Ciphers-are-used/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.13 Ensure only strong Ciphers are used
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.14-Ensure-only-strong-MAC-algorithms-are-used/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.14 Ensure only strong MAC algorithms are used
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.15-Ensure-only-strong-Key-Exchange-algorithms-are-used/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.15 Ensure only strong Key Exchange algorithms are used
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.16-Ensure-SSH-AllowTcpForwarding-is-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.16 Ensure SSH AllowTcpForwarding is disabled
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.17-Ensure-SSH-warning-banner-is-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.17 Ensure SSH warning banner is configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.18-Ensure-SSH-MaxAuthTries-is-set-to-4-or-less/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.18 Ensure SSH MaxAuthTries is set to 4 or less
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.19-Ensure-SSH-MaxStartups-is-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.19 Ensure SSH MaxStartups is configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.20-Ensure-SSH-MaxSessions-is-set-to-10-or-less/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.20 Ensure SSH MaxSessions is set to 10 or less
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.21-Ensure-SSH-LoginGraceTime-is-set-to-one-minute-or-less/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.21 Ensure SSH LoginGraceTime is set to one minute or less
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.2-Configure-SSH-Server/5.2.22-Ensure-SSH-Idle-Timeout-Interval-is-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.2.22 Ensure SSH Idle Timeout Interval is configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        
+          <label class="md-nav__link" for="__nav_6_3" id="__nav_6_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    5.3 Configure privilege escalation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            5.3 Configure privilege escalation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.3-Configure-privilege-escalation/5.3.1-Ensure-sudo-is-installed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.3.1 Ensure sudo is installed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.3-Configure-privilege-escalation/5.3.2-Ensure-sudo-commands-use-pty/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.3.2 Ensure sudo commands use pty
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.3-Configure-privilege-escalation/5.3.3-Ensure-sudo-log-file-exists/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.3.3 Ensure sudo log file exists
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.3-Configure-privilege-escalation/5.3.4-Ensure-users-must-provide-password-for-privilege-escalation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.3.4 Ensure users must provide password for privilege escalation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.3-Configure-privilege-escalation/5.3.5-Ensure-re-authentication-for-privilege-escalation-is-not-disabled-globally/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.3.5 Ensure re-authentication for privilege escalation is not disabled globally
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.3-Configure-privilege-escalation/5.3.6-Ensure-sudo-authentication-timeout-is-configured-correctly/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.3.6 Ensure sudo authentication timeout is configured correctly
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.3-Configure-privilege-escalation/5.3.7-Ensure-access-to-the-su-command-is-restricted/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.3.7 Ensure access to the su command is restricted
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" >
+        
+          <label class="md-nav__link" for="__nav_6_4" id="__nav_6_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    5.4 Configure PAM
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4">
+            <span class="md-nav__icon md-icon"></span>
+            5.4 Configure PAM
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.4-Configure-PAM/5.4.1-Ensure-password-creation-requirements-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.4.1 Ensure password creation requirements are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.4-Configure-PAM/5.4.2-Ensure-lockout-for-failed-password-attempts-is-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.4.2 Ensure lockout for failed password attempts is configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.4-Configure-PAM/5.4.3-Ensure-password-reuse-is-limited/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.4.3 Ensure password reuse is limited
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.4-Configure-PAM/5.4.4-Ensure-password-hashing-algorithm-is-up-to-date-with-the-latest-standards/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.4.4 Ensure password hashing algorithm is up to date with the latest standards
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.4-Configure-PAM/5.4.5-Ensure-all-current-passwords-uses-the-configured-hashing-algorithm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.4.5 Ensure all current passwords uses the configured hashing algorithm
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" >
+        
+          <label class="md-nav__link" for="__nav_6_5" id="__nav_6_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    5.5 User Accounts and Environment
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_5">
+            <span class="md-nav__icon md-icon"></span>
+            5.5 User Accounts and Environment
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5_1" >
+        
+          <label class="md-nav__link" for="__nav_6_5_1" id="__nav_6_5_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    5.5.1 Set Shadow Password Suite Parameters
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_6_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            5.5.1 Set Shadow Password Suite Parameters
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.5-User-Accounts-and-Environment/5.5.1-Set-Shadow-Password-Suite-Parameters/5.5.1.1-Ensure-minimum-days-between-password-changes-is-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.5.1.1 Ensure minimum days between password changes is configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.5-User-Accounts-and-Environment/5.5.1-Set-Shadow-Password-Suite-Parameters/5.5.1.2-Ensure-password-expiration-is-365-days-or-less/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.5.1.2 Ensure password expiration is 365 days or less
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.5-User-Accounts-and-Environment/5.5.1-Set-Shadow-Password-Suite-Parameters/5.5.1.3-Ensure-password-expiration-warning-days-is-7-or-more/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.5.1.3 Ensure password expiration warning days is 7 or more
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.5-User-Accounts-and-Environment/5.5.1-Set-Shadow-Password-Suite-Parameters/5.5.1.4-Ensure-inactive-password-lock-is-30-days-or-less/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.5.1.4 Ensure inactive password lock is 30 days or less
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.5-User-Accounts-and-Environment/5.5.1-Set-Shadow-Password-Suite-Parameters/5.5.1.5-Ensure-all-users-last-password-change-date-is-in-the-past/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.5.1.5 Ensure all users last password change date is in the past
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.5-User-Accounts-and-Environment/5.5.2-Ensure-system-accounts-are-secured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.5.2 Ensure system accounts are secured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.5-User-Accounts-and-Environment/5.5.3-Ensure-default-group-for-the-root-account-is-GID-0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.5.3 Ensure default group for the root account is GID 0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.5-User-Accounts-and-Environment/5.5.4-Ensure-default-user-umask-is-027-or-more-restrictive/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.5.4 Ensure default user umask is 027 or more restrictive
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../5-Access-Authentication-and-Authorization/5.5-User-Accounts-and-Environment/5.5.5-Ensure-default-user-shell-timeout-is-900-seconds-or-less/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5.5.5 Ensure default user shell timeout is 900 seconds or less
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    6 System Maintenance
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            6 System Maintenance
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_1" >
+        
+          <label class="md-nav__link" for="__nav_7_1" id="__nav_7_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    6.1 System File Permissions
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            6.1 System File Permissions
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.1-System-File-Permissions/6.1.1-Ensure-permissions-on-etc-passwd-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.1.1 Ensure permissions on /etc/passwd are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.1-System-File-Permissions/6.1.2-Ensure-permissions-on-etc-passwd-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.1.2 Ensure permissions on /etc/passwd- are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.1-System-File-Permissions/6.1.3-Ensure-permissions-on-etc-group-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.1.3 Ensure permissions on /etc/group are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.1-System-File-Permissions/6.1.4-Ensure-permissions-on-etc-group-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.1.4 Ensure permissions on /etc/group- are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.1-System-File-Permissions/6.1.5-Ensure-permissions-on-etc-shadow-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.1.5 Ensure permissions on /etc/shadow are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.1-System-File-Permissions/6.1.6-Ensure-permissions-on-etc-shadow-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.1.6 Ensure permissions on /etc/shadow- are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.1-System-File-Permissions/6.1.7-Ensure-permissions-on-etc-gshadow-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.1.7 Ensure permissions on /etc/gshadow are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.1-System-File-Permissions/6.1.9-Ensure-no-world-writable-files-exist/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.1.9 Ensure no world writable files exist
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.1-System-File-Permissions/6.1.10-Ensure-no-unowned-files-or-directories-exist/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.1.10 Ensure no unowned files or directories exist
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.1-System-File-Permissions/6.1.11-Ensure-no-ungrouped-files-or-directories-exist/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.1.11 Ensure no ungrouped files or directories exist
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.1-System-File-Permissions/6.1.12-Audit-SUID-executables/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.1.12 Audit SUID executables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.1-System-File-Permissions/6.1.13-Audit-SGID-executables/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.1.13 Audit SGID executables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.1-System-File-Permissions/6.1.8-Ensure-permissions-on-etc-gshadow-are-configured/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E6.1.8 Ensure permissions on /etc/gshadow- are configured
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    6.2 Local User and Group Settings
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            6.2 Local User and Group Settings
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.1-Ensure-accounts-in-etc-passwd-use-shadowed-passwords/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.1 Ensure accounts in /etc/passwd use shadowed passwords
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.2-Ensure-etc-shadow-password-fields-are-not-empty/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.2 Ensure /etc/shadow password fields are not empty
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.3-Ensure-all-groups-in-etc-passwd-exist-in-etc-group/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.3 Ensure all groups in /etc/passwd exist in /etc/group
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.4-Ensure-shadow-group-is-empty/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.4 Ensure shadow group is empty
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.5-Ensure-no-duplicate-UIDs-exist/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.5 Ensure no duplicate UIDs exist
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.6-Ensure-no-duplicate-GIDs-exist/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.6 Ensure no duplicate GIDs exist
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.7-Ensure-no-duplicate-user-names-exist/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.7 Ensure no duplicate user names exist
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.8-Ensure-no-duplicate-group-names-exist/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.8 Ensure no duplicate group names exist
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.9-Ensure-root-PATH-Integrity/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.9 Ensure root PATH Integrity
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.10-Ensure-root-is-the-only-UID-0-account/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.10 Ensure root is the only UID 0 account
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.11-Ensure-local-interactive-user-home-directories-exist/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.11 Ensure local interactive user home directories exist
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.12-Ensure-local-interactive-users-own-their-home-directories/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.12 Ensure local interactive users own their home directories
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.13-Ensure-local-interactive-user-home-directories-are-mode-750-or-more-restrictive/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.13 Ensure local interactive user home directories are mode 750 or more restrictive
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.14-Ensure-no-local-interactive-user-has-.netrc-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.14 Ensure no local interactive user has .netrc files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.15-Ensure-no-local-interactive-user-has-.forward-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.15 Ensure no local interactive user has .forward files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.16-Ensure-no-local-interactive-user-has-.rhosts-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.16 Ensue no local interactive user has .rhosts files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../6-System-Maintenance/6.2-Local-User-and-Group-Settings/6.2.17-Ensure-local-interactive-user-dot-files-are-not-group-or-world-writable/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6.2.17 Ensure local interactive user dot files are not group or world writable
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tags/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tags
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#audit" class="md-nav__link">
+    Audit
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#remediation" class="md-nav__link">
+    Remediation
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+<nav class="md-tags" >
+  
+    
+    
+    
+      <a href="../../../../tags/#level-2" class="md-tag">Level 2</a>
+    
+  
+    
+    
+    
+      <a href="../../../../tags/#workstation" class="md-tag">Workstation</a>
+    
+  
+    
+    
+    
+      <a href="../../../../tags/#server" class="md-tag">Server</a>
+    
+  
+    
+    
+    
+      <a href="../../../../tags/#initial-setup" class="md-tag">Initial Setup</a>
+    
+  
+    
+    
+    
+      <a href="../../../../tags/#filesystem-configuration" class="md-tag">Filesystem Configuration</a>
+    
+  
+    
+    
+    
+      <a href="../../../../tags/#configure-var" class="md-tag">Configure /var</a>
+    
+  
+    
+    
+    
+      <a href="../../../../tags/#automated" class="md-tag">Automated</a>
+    
+  
+    
+    
+    
+      <a href="../../../../tags/#ig1" class="md-tag">IG1</a>
+    
+  
+    
+    
+    
+      <a href="../../../../tags/#ig2" class="md-tag">IG2</a>
+    
+  
+    
+    
+    
+      <a href="../../../../tags/#ig3" class="md-tag">IG3</a>
+    
+  
+    
+    
+    
+      <a href="../../../../tags/#33-configure-data-access-control-lists" class="md-tag">3.3 Configure Data Access Control Lists</a>
+    
+  
+    
+    
+    
+      <a href="../../../../tags/#t1499" class="md-tag">T1499</a>
+    
+  
+    
+    
+    
+      <a href="../../../../tags/#t1499001" class="md-tag">T1499.001</a>
+    
+  
+    
+    
+    
+      <a href="../../../../tags/#ta0006" class="md-tag">TA0006</a>
+    
+  
+</nav>
+
+
+  
+  
+
+
+  <h1>1.1.3.1 Ensure separate partition exists for /var</h1>
+
+<h2 id="audit">Audit<a class="headerlink" href="#audit" title="Permanent link">#</a></h2>
+<p>Run the following command and verify output shows /var is mounted.</p>
+<p>Example:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># findmnt --kernel /var</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>TARGET<span class="w"> </span>SOURCE<span class="w"> </span>FSTYPE<span class="w"> </span>OPTIONS
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>/var<span class="w"> </span>/dev/sdb<span class="w"> </span>ext4<span class="w"> </span>rw,relatime,seclabel,data<span class="o">=</span>ordered
+</span></code></pre></div></p>
+<h2 id="remediation">Remediation<a class="headerlink" href="#remediation" title="Permanent link">#</a></h2>
+<p>For new installations, during installation create a custom partition setup and specify a separate partition for /var.</p>
+<p>For systems that were previously installed, create a new partition and configure /etc/fstab as appropriate.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../../1.1.2-Configure-tmp/1.1.2.4-Ensure-nosuid-option-set-on-tmp-partition/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 1.1.2.4 Ensure nosuid option set on /tmp partition" rel="prev">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                1.1.2.4 Ensure nosuid option set on /tmp partition
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../1.1.3.2-Ensure-nodev-option-set-on-var-partition/" class="md-footer__link md-footer__link--next" aria-label="Next: 1.1.3.2 Ensure nodev option set on /var partition" rel="next">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                1.1.3.2 Ensure nodev option set on /var partition
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["content.code.copy", "content.code.select", "navigation.instant", "navigation.tracking", "navigation.footer"], "search": "../../../../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.78eede0e.min.js"></script>
+      
+    
+  </body>
+</html>
